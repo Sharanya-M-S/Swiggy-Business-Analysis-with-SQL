@@ -1,0 +1,234 @@
+﻿(1) Selecting the table of items (Food)
+
+
+SELECT * FROM `swiggy-sql-project.Information.Food` LIMIT 1000
+
+
+
+
+(2)Name of items (Distinct food items ordered)
+
+
+SELECT count(distinct name) FROM `swiggy-sql-project.Information.Food` 
+
+
+
+
+(3) Counting of veg & non veg
+
+
+SELECT is_veg,count(name) as items FROM `swiggy-sql-project.Information.Food` 
+group by is_veg
+
+
+
+
+(4) Checking items with is_veg=2
+
+
+SELECT * FROM `swiggy-sql-project.Information.Food`
+where is_veg=2
+
+
+
+
+(5) How much orders were placed
+
+
+SELECT count(distinct order_id) FROM `swiggy-sql-project.Information.Food`
+
+
+
+
+(6) Data with item name containing “Chicken”
+
+
+SELECT * FROM `swiggy-sql-project.Information.Food`
+where name like '%Chicken%'
+
+
+
+
+(7) Data with item name containing “Paratha”
+
+
+SELECT * FROM `swiggy-sql-project.Information.Food`
+where name like '%Paratha%'
+
+
+
+
+(8) Average number of orders per item
+
+
+SELECT count(name)/count(distinct order_id) as avgitemsperorder FROM `swiggy-sqlproject.Information.Food`
+
+
+(9) Number of times each item was ordered
+
+
+SELECT name,count(*) FROM `swiggy-sql-project.Information.Food`
+group by name
+order by count(*) desc
+
+
+
+
+(10) Selecting the tables of orders (Info)
+
+
+SELECT * FROM `swiggy-sql-project.Information.Info` LIMIT 1000
+
+
+
+
+(11) Distinct rain modes in the data
+
+
+SELECT distinct rain_mode FROM `swiggy-sql-project.Information.Info` LIMIT 1000
+
+
+
+
+(12) Distinct on time delivery
+
+
+SELECT distinct on_time FROM `swiggy-sql-project.Information.Info` LIMIT 1000
+
+
+
+
+(13) Number of distinct restaurants ordered from
+
+
+SELECT count(distinct restaurant_name) FROM `swiggy-sql-project.Information.Info` LIMIT 
+1000
+
+
+
+
+(14) Number of times ordered from Restaurant 
+
+
+SELECT restaurant_name,count(*) FROM `swiggy-sql-project.Information.Info` 
+group by restaurant_name
+order by count(*) desc
+
+
+
+
+(15) Month having most number of orders
+
+
+SELECT format_date('%Y-%m',order_time),count(distinct order_id) FROM `swiggy-sqlproject.Information.Info`
+group by format_date('%Y-%m',order_time)
+order by count(distinct order_id) desc
+
+
+
+
+
+
+(16) Latest order data
+
+
+SELECT max(order_time) FROM `swiggy-sql-project.Information.Info`
+
+
+
+
+(17) Revenue made by swiggy
+
+
+SELECT format_date('%Y-%m',order_time),sum(order_total) as totalrevenue 
+FROM `swiggy-sql-project.Information.Info`
+group by format_date('%Y-%m',order_time)
+order by totalrevenue desc
+
+
+
+
+(18) Amount spent on an average per order
+
+
+SELECT sum(order_total)/count(distinct order_id) as aov
+FROM `swiggy-sql-project.Information.Info`
+
+
+
+
+(19) Amount spent every year on swiggy
+
+
+SELECT format_date('%Y',order_time),sum(order_total) as revenue
+FROM `swiggy-sql-project.Information.Info`
+group by format_date('%Y',order_time)
+
+
+
+
+(20) Year on year change in revenue
+
+
+SELECT format_date('%Y',order_time) as yearorder,sum(order_total) as revenue
+FROM `swiggy-sql-project.Information.Info`
+group by format_date('%Y',order_time))
+select yearorder,revenue,lag(revenue) over (order by yearorder) as previousrevenue from
+Final
+
+
+
+
+(21) Giving a rank
+
+
+SELECT format_date('%Y',order_time) as yearorder,sum(order_total) as revenue
+FROM `swiggy-sql-project.Information.Info`
+group by format_date('%Y',order_time))
+select yearorder,revenue,
+rank() over (order by revenue desc) as ranking from final
+
+
+
+
+(22) Ranking by restaurant name
+
+
+SELECT restaurant_name,sum(order_total) as revenue
+FROM `swiggy-sql-project.Information.Info`
+group by restaurant_name)
+select restaurant_name,revenue,
+rank() over (order by revenue desc) as ranking from final
+order by revenue desc
+
+
+
+
+(23) Money made in various types of rain mode
+
+
+SELECT rain_mode,sum(order_total)
+FROM `swiggy-sql-project.Information.Info`
+group by rain_mode
+
+
+
+
+(24) Joining food (Items) table with information (orders) table
+
+
+SELECT a.name,a.is_veg,b.restaurant_name,b.order_id,b.order_time FROM `swiggy-sqlproject.Information.Food` a
+join `swiggy-sql-project.Information.Info` b
+on a.order_id=b.order_id
+
+
+
+
+(25) Looking for product combination
+
+
+SELECT a.order_id,a.name,b.name as name2,concat(a.name,"-",b.name) FROM `swiggy-sqlproject.Information.Food` a
+join `swiggy-sql-project.Information.Food` b
+on a.order_id=b.order_id
+where a.name!=b.name
+and a.name<b.name
